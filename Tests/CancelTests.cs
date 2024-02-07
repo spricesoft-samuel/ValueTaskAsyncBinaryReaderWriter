@@ -12,7 +12,7 @@ namespace Overby.Extensions.Tests
     {
         public static IEnumerable<object[]> GetWriterCases()
         {
-            object[] test(Func<AsyncBinaryWriter, CancellationToken, Task> f) =>
+            object[] test(Func<AsyncBinaryWriter, CancellationToken, ValueTask> f) =>
                 new object[] { f };
 
             yield return test((w,t) => w.WriteAsync(true, t));
@@ -36,7 +36,7 @@ namespace Overby.Extensions.Tests
 
         public static IEnumerable<object[]> GetReaderCases()
         {
-            object[] test(Func<AsyncBinaryReader, CancellationToken, Task> f) =>
+            object[] test<T>(Func<AsyncBinaryReader, CancellationToken, ValueTask<T>> f) =>
                 new object[] { f };
 
             yield return test((r, t) => r.Read7BitEncodedIntAsync(t));
@@ -60,26 +60,26 @@ namespace Overby.Extensions.Tests
         }
 
         [Theory, MemberData(nameof(GetReaderCases))]
-        public async Task TestReaderCancellation(Func<AsyncBinaryReader, CancellationToken, Task> f)
+        public async Task TestReaderCancellation<T>(Func<AsyncBinaryReader, CancellationToken, ValueTask<T>> f)
         {
             using (var cts = new CancellationTokenSource())
             {
                 var ct = cts.Token;
                 var reader = new AsyncBinaryReader(new SlowStream());
                 cts.Cancel();
-                await Assert.ThrowsAsync<TaskCanceledException>(() => f(reader, ct));
+                await Assert.ThrowsAsync<TaskCanceledException>(async () => await f(reader, ct));
             }
         }
 
         [Theory, MemberData(nameof(GetWriterCases))]
-        public async Task TestWriterCancellation(Func<AsyncBinaryWriter, CancellationToken, Task> f)
+        public async Task TestWriterCancellation(Func<AsyncBinaryWriter, CancellationToken, ValueTask> f)
         {
             using (var cts = new CancellationTokenSource())
             {
                 var ct = cts.Token;
                 var writer = new AsyncBinaryWriter(new SlowStream());
                 cts.Cancel();
-                await Assert.ThrowsAsync<TaskCanceledException>(() => f(writer, ct));                
+                await Assert.ThrowsAsync<TaskCanceledException>(async () => await f(writer, ct));                
             }
         }
     }

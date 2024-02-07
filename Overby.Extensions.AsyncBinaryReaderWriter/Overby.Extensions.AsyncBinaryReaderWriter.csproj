@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>
-      netstandard2.0;NET461
+      net6.0	  
     </TargetFrameworks>
   </PropertyGroup>
 
@@ -19,5 +19,10 @@
     <PackageVersion>1.0.0</PackageVersion>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ronnieoverby/AsyncBinaryReaderWriter/release/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO" Version="4.3.0" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
 
 </Project>

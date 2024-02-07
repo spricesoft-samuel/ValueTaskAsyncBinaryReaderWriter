@@ -14,7 +14,7 @@ namespace Overby.Extensions.Tests
         public static IEnumerable<object[]> GetCompatCases()
         {
             // bool
-            Func<AsyncBinaryWriter, object, Task> awriter = (w, v) => w.WriteAsync((bool)v);
+            Func<AsyncBinaryWriter, object, ValueTask> awriter = (w, v) => w.WriteAsync((bool)v);
             Action<BinaryWriter, object> swriter = (w, v) => w.Write((bool)v);
             Func<BinaryReader, object> reader = r => r.ReadBoolean();
 
@@ -149,7 +149,7 @@ namespace Overby.Extensions.Tests
         }
 
         [Theory, MemberData(nameof(GetCompatCases))]
-        public async Task Test(object value, Func<AsyncBinaryWriter, object, Task> awriteFunc, Action<BinaryWriter, object> swriteFunc, Func<BinaryReader, object> readFunc, Encoding encoding = null)
+        public async Task Test(object value, Func<AsyncBinaryWriter, object, ValueTask> awriteFunc, Action<BinaryWriter, object> swriteFunc, Func<BinaryReader, object> readFunc, Encoding encoding = null)
         {
             encoding = encoding ?? Encoding.UTF8;
 
